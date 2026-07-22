@@ -1,0 +1,6 @@
+{
+  "name": "WebToApp Converter",
+  "description": "Chuyển đổi trang web thành ứng dụng Android APK mượt mà, hỗ trợ thông báo đẩy, tinh chỉnh giao diện và xuất ứng dụng hoàn chỉnh.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
