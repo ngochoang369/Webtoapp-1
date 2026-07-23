@@ -1,6 +1,6 @@
 {
-  "name": "WebToApp Converter",
-  "description": "Chuyển đổi trang web thành ứng dụng Android APK mượt mà, hỗ trợ thông báo đẩy, tinh chỉnh giao diện và xuất ứng dụng hoàn chỉnh.",
+  "name": "PrivaDiary",
+  "description": "Ứng dụng nhật ký riêng tư mã hóa đầu cuối với Supabase Auth, phân quyền admin devregish@gmail.com và bảo mật PIN Vault.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

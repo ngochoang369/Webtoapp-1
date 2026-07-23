@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "WebToApp"
+rootProject.name = "PrivaDiary"
 
 include(":app")

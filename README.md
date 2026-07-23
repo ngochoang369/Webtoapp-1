@@ -1,21 +1,41 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Nhật Ký Bảo Mật Vault & E2EE - Android App
 
-# Run and deploy your AI Studio app
+Ứng dụng nhật ký bảo mật cá nhân mã hóa đầu-cuối (End-to-End Encryption) trên Android, hỗ trợ mã hóaAES-256-GCM, mở khóa bằng PIN/Sinh trắc học.
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/0c99b782-a9ac-428a-96ae-f8ee00e5e979
+## 🚀 Tự Động Build APK bằng GitHub Actions
 
-## Run Locally
+Dự án đã được cấu hình sẵn **GitHub Actions** tại thư mục `.github/workflows/android.yml`.
 
-**Prerequisites:**  [Android Studio](https://developer.android.com/studio)
+### Các bước đẩy code lên GitHub & Tải file APK:
 
+1. **Khởi tạo và đẩy code lên GitHub:**
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit - Vault Diary E2EE"
+   git branch -M main
+   git remote add origin https://github.com/TÊN_USER/TÊN_REPO.git
+   git push -u origin main
+   ```
 
-1. Open Android Studio
-2. Select **Open** and choose the directory containing this project
-3. Allow Android Studio to fix any incompatibilities as it imports the project.
-4. Create a file named `.env` in the project directory and set `GEMINI_API_KEY` in that file to your Gemini API key (see `.env.example` for an example)
-5. Remove this line from the app's `build.gradle.kts` file: `signingConfig = signingConfigs.getByName("debugConfig")`
-6. Run the app on an emulator or physical device
+2. **Tự động Build APK:**
+   - Khi bạn `push` code lên nhánh `main`, GitHub Actions sẽ tự động thực hiện build dự án.
+   - Bạn có thể theo dõi tiến trình tại tab **Actions** trên Repository GitHub của bạn.
+
+3. **Tải về File APK:**
+   - Vào tab **Actions** -> Chọn workflow vừa chạy thành công.
+   - Cuộn xuống phần **Artifacts** để tải về file **`VaultDiary-Debug-APK`**.
+
+---
+
+## 🛠 Hướng Dẫn Build Thủ Công Local
+
+Chạy lệnh sau tại thư mục gốc của dự án:
+
+```bash
+./gradlew assembleDebug
+```
+
+File APK đầu ra nằm tại: `app/build/outputs/apk/debug/app-debug.apk`

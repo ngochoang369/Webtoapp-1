@@ -21,11 +21,7 @@ class GreetingScreenshotTest {
 
   @Test
   fun greeting_screenshot() {
-    composeTestRule.setContent {
-      MyApplicationTheme {
-        androidx.compose.material3.Text("Welcome to WebToApp - Trình Biên Dịch Web Thành App")
-      }
-    }
+    composeTestRule.setContent { MyApplicationTheme { Greeting("Robolectric") } }
 
     composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/greeting.png")
   }

@@ -1,14 +1,19 @@
-package com.example.data.local
+package com.example.data.db
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.data.model.WebConfig
 
-@Database(entities = [WebConfig::class], version = 2, exportSchema = false)
+@Database(
+    entities = [DiaryEntryEntity::class, AuditLogEntity::class],
+    version = 1,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun webConfigDao(): WebConfigDao
+
+    abstract fun diaryDao(): DiaryDao
+    abstract fun auditLogDao(): AuditLogDao
 
     companion object {
         @Volatile
@@ -19,10 +24,9 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "webtoapp_database"
-                )
-                .fallbackToDestructiveMigration()
-                .build()
+                    "privadiary_vault_db"
+                ).fallbackToDestructiveMigration()
+                 .build()
                 INSTANCE = instance
                 instance
             }

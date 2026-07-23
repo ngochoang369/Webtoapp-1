@@ -1,155 +1,284 @@
 package com.example
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AdminPanelSettings
+import androidx.compose.material.icons.filled.Book
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.data.model.WebConfig
-import com.example.ui.screens.BuildScreen
-import com.example.ui.screens.ConfigScreen
-import com.example.ui.screens.HomeScreen
-import com.example.ui.screens.WebViewScreen
-import com.example.ui.theme.MyApplicationTheme
-import com.example.ui.viewmodel.WebConfigViewModel
-
-sealed interface AppScreen {
-    object Home : AppScreen
-    data class Config(val config: WebConfig?) : AppScreen
-    data class Build(val config: WebConfig) : AppScreen
-    data class WebView(val config: WebConfig) : AppScreen
-}
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.data.db.AppDatabase
+import com.example.data.model.DiaryModel
+import com.example.data.repository.DiaryRepository
+import com.example.data.supabase.SupabaseClient
+import com.example.data.supabase.UserSession
+import com.example.security.VaultSecurityManager
+import com.example.ui.screens.AdminAuditScreen
+import com.example.ui.screens.DiaryListScreen
+import com.example.ui.screens.LoginScreen
+import com.example.ui.screens.NewDiaryScreen
+import com.example.ui.screens.SettingsScreen
+import com.example.ui.screens.VaultLockScreen
+import com.example.ui.theme.PrivaDiaryTheme
+import com.example.ui.theme.VaultDarkBg
+import com.example.ui.theme.VaultPrimary
+import com.example.ui.theme.VaultSurfaceDark
+import com.example.ui.viewmodel.AdminViewModel
+import com.example.ui.viewmodel.AuthViewModel
+import com.example.ui.viewmodel.DiaryViewModel
+import com.example.ui.viewmodel.VaultViewModel
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var vaultSecurityManager: VaultSecurityManager
+    private lateinit var supabaseClient: SupabaseClient
+    private lateinit var diaryRepository: DiaryRepository
+
+    private lateinit var authViewModel: AuthViewModel
+    private lateinit var diaryViewModel: DiaryViewModel
+    private lateinit var adminViewModel: AdminViewModel
+    private lateinit var vaultViewModel: VaultViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ensureWebViewCacheDirs()
         enableEdgeToEdge()
+
+        // Initialize DB and Dependencies
+        val db = AppDatabase.getDatabase(applicationContext)
+        vaultSecurityManager = VaultSecurityManager(applicationContext)
+        supabaseClient = SupabaseClient(vaultSecurityManager)
+        diaryRepository = DiaryRepository(db.diaryDao(), db.auditLogDao())
+
+        authViewModel = AuthViewModel(supabaseClient)
+        diaryViewModel = DiaryViewModel(diaryRepository) { authViewModel.session.value }
+        adminViewModel = AdminViewModel(diaryRepository) { authViewModel.session.value }
+        vaultViewModel = VaultViewModel(vaultSecurityManager)
+
         setContent {
-            MyApplicationTheme {
-                val viewModel: WebConfigViewModel = viewModel()
-                val context = LocalContext.current
-                val configs by viewModel.allConfigs.collectAsState()
-                
-                val sharedPrefs = remember { context.getSharedPreferences("webtoapp_prefs", Context.MODE_PRIVATE) }
-                var standaloneConfigId by remember { mutableStateOf(sharedPrefs.getInt("standalone_config_id", -1)) }
-                
-                var currentScreen by remember { mutableStateOf<AppScreen>(AppScreen.Home) }
-
-                // Auto-route on app startup if single app mode is locked
-                LaunchedEffect(configs, standaloneConfigId) {
-                    if (standaloneConfigId != -1 && configs.isNotEmpty() && currentScreen == AppScreen.Home) {
-                        val target = configs.find { it.id == standaloneConfigId }
-                        if (target != null) {
-                            currentScreen = AppScreen.WebView(target)
-                        }
-                    }
-                }
-
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AnimatedContent(
-                        targetState = currentScreen,
-                        transitionSpec = {
-                            fadeIn(animationSpec = androidx.compose.animation.core.tween(300)) togetherWith
-                            fadeOut(animationSpec = androidx.compose.animation.core.tween(300))
-                        },
-                        label = "ScreenTransition"
-                    ) { screen ->
-                        when (screen) {
-                            is AppScreen.Home -> {
-                                HomeScreen(
-                                    viewModel = viewModel,
-                                    onCreateNew = { currentScreen = AppScreen.Config(null) },
-                                    onEditConfig = { config -> currentScreen = AppScreen.Config(config) },
-                                    onBuildConfig = { config -> currentScreen = AppScreen.Build(config) },
-                                    onLaunchSandbox = { config -> currentScreen = AppScreen.WebView(config) },
-                                    standaloneConfigId = standaloneConfigId,
-                                    onToggleStandalone = { config ->
-                                        val newId = if (standaloneConfigId == config.id) -1 else config.id
-                                        sharedPrefs.edit().putInt("standalone_config_id", newId).apply()
-                                        standaloneConfigId = newId
-                                        if (newId != -1) {
-                                            android.widget.Toast.makeText(
-                                                context,
-                                                "Đã ghim ${config.name} làm App Độc lập mặc định!",
-                                                android.widget.Toast.LENGTH_LONG
-                                            ).show()
-                                        } else {
-                                            android.widget.Toast.makeText(
-                                                context,
-                                                "Đã tắt Chế độ Độc lập. Quay lại Console!",
-                                                android.widget.Toast.LENGTH_LONG
-                                            ).show()
-                                        }
-                                    }
-                                )
-                            }
-                            is AppScreen.Config -> {
-                                ConfigScreen(
-                                    config = screen.config,
-                                    viewModel = viewModel,
-                                    onBack = { currentScreen = AppScreen.Home }
-                                )
-                            }
-                            is AppScreen.Build -> {
-                                BuildScreen(
-                                    config = screen.config,
-                                    viewModel = viewModel,
-                                    onLaunchSandbox = { currentScreen = AppScreen.WebView(screen.config) },
-                                    onClose = {
-                                        viewModel.resetBuild()
-                                        currentScreen = AppScreen.Home
-                                    }
-                                )
-                            }
-                            is AppScreen.WebView -> {
-                                WebViewScreen(
-                                    config = screen.config,
-                                    isStandaloneMode = (screen.config.id == standaloneConfigId),
-                                    onExitStandalone = {
-                                        sharedPrefs.edit().putInt("standalone_config_id", -1).apply()
-                                        standaloneConfigId = -1
-                                        currentScreen = AppScreen.Home
-                                    },
-                                    onClose = { currentScreen = AppScreen.Home }
-                                )
-                            }
-                        }
-                    }
-                }
+            PrivaDiaryTheme(darkTheme = true) {
+                MainAppHost(
+                    authViewModel = authViewModel,
+                    diaryViewModel = diaryViewModel,
+                    adminViewModel = adminViewModel,
+                    vaultViewModel = vaultViewModel
+                )
             }
         }
     }
+}
 
-    private fun ensureWebViewCacheDirs() {
-        try {
-            val cacheDir = cacheDir
-            val jsDir = java.io.File(cacheDir, "WebView/Default/HTTP Cache/Code Cache/js")
-            val wasmDir = java.io.File(cacheDir, "WebView/Default/HTTP Cache/Code Cache/wasm")
-            if (!jsDir.exists()) {
-                jsDir.mkdirs()
+enum class MainTab {
+    DIARY_LIST,
+    NEW_DIARY,
+    ADMIN_AUDIT,
+    SETTINGS
+}
+
+@Composable
+fun MainAppHost(
+    authViewModel: AuthViewModel,
+    diaryViewModel: DiaryViewModel,
+    adminViewModel: AdminViewModel,
+    vaultViewModel: VaultViewModel
+) {
+    val session by authViewModel.session.collectAsState()
+    val isVaultLocked by vaultViewModel.isLocked.collectAsState()
+
+    var activeTab by remember { mutableStateOf(MainTab.DIARY_LIST) }
+    var editingDiary by remember { mutableStateOf<DiaryModel?>(null) }
+    var isSettingNewPinFlow by remember { mutableStateOf(false) }
+
+    // Check Vault Lock State first
+    if (isVaultLocked || isSettingNewPinFlow) {
+        VaultLockScreen(
+            isSettingNewPin = isSettingNewPinFlow,
+            onPinSuccess = {
+                if (isSettingNewPinFlow) {
+                    isSettingNewPinFlow = false
+                } else {
+                    vaultViewModel.verifyPin("")
+                }
+            },
+            onSetNewPin = { newPin ->
+                vaultViewModel.setPin(newPin)
+                isSettingNewPinFlow = false
             }
-            if (!wasmDir.exists()) {
-                wasmDir.mkdirs()
+        )
+        return
+    }
+
+    // Check Authentication State
+    if (session == null || !session!!.isLoggedIn) {
+        LoginScreen(
+            authViewModel = authViewModel
+        )
+        return
+    }
+
+    // Main Authenticated Application View with Bottom Navigation
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag("main_app_host"),
+        containerColor = VaultDarkBg,
+        bottomBar = {
+            NavigationBar(
+                containerColor = VaultSurfaceDark,
+                contentColor = Color.White,
+                tonalElevation = 8.dp,
+                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
+            ) {
+                // Tab 1: Nhật ký
+                NavigationBarItem(
+                    selected = activeTab == MainTab.DIARY_LIST,
+                    onClick = {
+                        editingDiary = null
+                        activeTab = MainTab.DIARY_LIST
+                    },
+                    icon = { Icon(Icons.Default.Book, contentDescription = "Nhật ký") },
+                    label = { Text("Nhật Ký", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        selectedTextColor = VaultPrimary,
+                        indicatorColor = VaultPrimary,
+                        unselectedIconColor = Color.Gray,
+                        unselectedTextColor = Color.Gray
+                    ),
+                    modifier = Modifier.testTag("tab_diary_list")
+                )
+
+                // Tab 2: Viết mới
+                NavigationBarItem(
+                    selected = activeTab == MainTab.NEW_DIARY,
+                    onClick = {
+                        editingDiary = null
+                        activeTab = MainTab.NEW_DIARY
+                    },
+                    icon = { Icon(Icons.Default.Edit, contentDescription = "Viết mới") },
+                    label = { Text("Viết Bài", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        selectedTextColor = VaultPrimary,
+                        indicatorColor = VaultPrimary,
+                        unselectedIconColor = Color.Gray,
+                        unselectedTextColor = Color.Gray
+                    ),
+                    modifier = Modifier.testTag("tab_new_diary")
+                )
+
+                // Tab 3: Admin Audit (Visible to devregish@gmail.com or admin mode)
+                if (session?.isAdmin == true) {
+                    NavigationBarItem(
+                        selected = activeTab == MainTab.ADMIN_AUDIT,
+                        onClick = { activeTab = MainTab.ADMIN_AUDIT },
+                        icon = { Icon(Icons.Default.AdminPanelSettings, contentDescription = "Admin") },
+                        label = { Text("Admin Audit", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = Color.White,
+                            selectedTextColor = Color(0xFFA78BFA),
+                            indicatorColor = Color(0xFF6D28D9),
+                            unselectedIconColor = Color.Gray,
+                            unselectedTextColor = Color.Gray
+                        ),
+                        modifier = Modifier.testTag("tab_admin_audit")
+                    )
+                }
+
+                // Tab 4: Cài đặt
+                NavigationBarItem(
+                    selected = activeTab == MainTab.SETTINGS,
+                    onClick = { activeTab = MainTab.SETTINGS },
+                    icon = { Icon(Icons.Default.Settings, contentDescription = "Cài đặt") },
+                    label = { Text("Cài Đặt", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        selectedTextColor = VaultPrimary,
+                        indicatorColor = VaultPrimary,
+                        unselectedIconColor = Color.Gray,
+                        unselectedTextColor = Color.Gray
+                    ),
+                    modifier = Modifier.testTag("tab_settings")
+                )
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            when (activeTab) {
+                MainTab.DIARY_LIST -> {
+                    DiaryListScreen(
+                        diaryViewModel = diaryViewModel,
+                        session = session,
+                        onAddNewClick = {
+                            editingDiary = null
+                            activeTab = MainTab.NEW_DIARY
+                        },
+                        onEditClick = { diary ->
+                            editingDiary = diary
+                            activeTab = MainTab.NEW_DIARY
+                        }
+                    )
+                }
+
+                MainTab.NEW_DIARY -> {
+                    NewDiaryScreen(
+                        diaryViewModel = diaryViewModel,
+                        editingDiary = editingDiary,
+                        onBackClick = {
+                            editingDiary = null
+                            activeTab = MainTab.DIARY_LIST
+                        }
+                    )
+                }
+
+                MainTab.ADMIN_AUDIT -> {
+                    AdminAuditScreen(adminViewModel = adminViewModel)
+                }
+
+                MainTab.SETTINGS -> {
+                    SettingsScreen(
+                        authViewModel = authViewModel,
+                        vaultViewModel = vaultViewModel,
+                        session = session,
+                        onSetNewPinRequested = {
+                            isSettingNewPinFlow = true
+                        }
+                    )
+                }
+            }
         }
     }
 }
