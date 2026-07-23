@@ -2,6 +2,7 @@ package com.example.security
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.BuildConfig
 
 class VaultSecurityManager(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("privadiary_vault_prefs", Context.MODE_PRIVATE)
@@ -13,8 +14,8 @@ class VaultSecurityManager(context: Context) {
         private const val KEY_ALLOW_ADMIN_AUDIT_DEFAULT = "key_allow_admin_audit_default"
         private const val KEY_SUPABASE_URL = "key_supabase_url"
         private const val KEY_SUPABASE_ANON_KEY = "key_supabase_anon_key"
-        private const val DEFAULT_SUPABASE_URL = "https://aistudio-privadiary-db.supabase.co"
-        private const val DEFAULT_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhb24ifQ.demo"
+        private const val DEFAULT_SUPABASE_URL = "https://xrkhhfbwcloinvykrvuc.supabase.co"
+        private const val DEFAULT_SUPABASE_ANON_KEY = "sb_publishable_9bNaVsNEt0b9uaObGPMWzw_0QdbBN-S"
     }
 
     var isVaultLocked: Boolean = isPinEnabled()
@@ -71,10 +72,14 @@ class VaultSecurityManager(context: Context) {
     }
 
     fun getSupabaseUrl(): String {
+        val buildConfigUrl = try { BuildConfig.SUPABASE_URL } catch (e: Throwable) { "" }
+        if (buildConfigUrl.isNotBlank()) return buildConfigUrl
         return prefs.getString(KEY_SUPABASE_URL, DEFAULT_SUPABASE_URL) ?: DEFAULT_SUPABASE_URL
     }
 
     fun getSupabaseAnonKey(): String {
+        val buildConfigKey = try { BuildConfig.SUPABASE_ANON_KEY } catch (e: Throwable) { "" }
+        if (buildConfigKey.isNotBlank()) return buildConfigKey
         return prefs.getString(KEY_SUPABASE_ANON_KEY, DEFAULT_SUPABASE_ANON_KEY) ?: DEFAULT_SUPABASE_ANON_KEY
     }
 
