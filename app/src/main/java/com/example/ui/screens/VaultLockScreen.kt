@@ -49,7 +49,7 @@ import com.example.ui.theme.VaultSurfaceDark
 @Composable
 fun VaultLockScreen(
     isSettingNewPin: Boolean = false,
-    onPinSuccess: () -> Unit,
+    onVerifyPin: (String) -> Boolean = { false },
     onSetNewPin: (String) -> Unit = {}
 ) {
     var enteredPin by remember { mutableStateOf("") }
@@ -58,14 +58,18 @@ fun VaultLockScreen(
 
     fun handleKeyPress(key: String) {
         if (enteredPin.length < 4) {
-            enteredPin += key
+            val newPin = enteredPin + key
+            enteredPin = newPin
             errorMessage = ""
-            if (enteredPin.length == 4) {
+            if (newPin.length == 4) {
                 if (isSettingNewPin) {
-                    onSetNewPin(enteredPin)
-                    onPinSuccess()
+                    onSetNewPin(newPin)
                 } else {
-                    onPinSuccess()
+                    val success = onVerifyPin(newPin)
+                    if (!success) {
+                        errorMessage = "Mã PIN không đúng, vui lòng thử lại!"
+                        enteredPin = ""
+                    }
                 }
             }
         }

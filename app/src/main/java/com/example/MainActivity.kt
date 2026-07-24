@@ -122,12 +122,8 @@ fun MainAppHost(
     if (isVaultLocked || isSettingNewPinFlow) {
         VaultLockScreen(
             isSettingNewPin = isSettingNewPinFlow,
-            onPinSuccess = {
-                if (isSettingNewPinFlow) {
-                    isSettingNewPinFlow = false
-                } else {
-                    vaultViewModel.verifyPin("")
-                }
+            onVerifyPin = { pin ->
+                vaultViewModel.verifyPin(pin)
             },
             onSetNewPin = { newPin ->
                 vaultViewModel.setPin(newPin)
