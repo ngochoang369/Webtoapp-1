@@ -3,6 +3,7 @@ package com.example.security
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.BuildConfig
+import com.example.data.supabase.UserSession
 
 class VaultSecurityManager(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("privadiary_vault_prefs", Context.MODE_PRIVATE)
@@ -16,6 +17,13 @@ class VaultSecurityManager(context: Context) {
         private const val KEY_SUPABASE_ANON_KEY = "key_supabase_anon_key"
         private const val DEFAULT_SUPABASE_URL = "https://xrkhhfbwcloinvykrvuc.supabase.co"
         private const val DEFAULT_SUPABASE_ANON_KEY = "sb_publishable_9bNaVsNEt0b9uaObGPMWzw_0QdbBN-S"
+
+        private const val KEY_SESSION_USER_ID = "key_session_user_id"
+        private const val KEY_SESSION_EMAIL = "key_session_email"
+        private const val KEY_SESSION_FULL_NAME = "key_session_full_name"
+        private const val KEY_SESSION_ACCESS_TOKEN = "key_session_access_token"
+        private const val KEY_SESSION_IS_LOGGED_IN = "key_session_is_logged_in"
+        private const val KEY_SESSION_IS_OFFLINE_MODE = "key_session_is_offline_mode"
     }
 
     var isVaultLocked: Boolean = isPinEnabled()
@@ -87,6 +95,44 @@ class VaultSecurityManager(context: Context) {
         prefs.edit()
             .putString(KEY_SUPABASE_URL, url.ifBlank { DEFAULT_SUPABASE_URL })
             .putString(KEY_SUPABASE_ANON_KEY, key.ifBlank { DEFAULT_SUPABASE_ANON_KEY })
+            .apply()
+    }
+
+    fun saveUserSession(session: UserSession) {
+        prefs.edit()
+            .putString(KEY_SESSION_USER_ID, session.userId)
+            .putString(KEY_SESSION_EMAIL, session.email)
+            .putString(KEY_SESSION_FULL_NAME, session.fullName)
+            .putString(KEY_SESSION_ACCESS_TOKEN, session.accessToken)
+            .putBoolean(KEY_SESSION_IS_LOGGED_IN, session.isLoggedIn)
+            .putBoolean(KEY_SESSION_IS_OFFLINE_MODE, session.isOfflineMode)
+            .apply()
+    }
+
+    fun getUserSession(): UserSession? {
+        val isLoggedIn = prefs.getBoolean(KEY_SESSION_IS_LOGGED_IN, false)
+        if (!isLoggedIn) return null
+        val email = prefs.getString(KEY_SESSION_EMAIL, "") ?: ""
+        if (email.isBlank()) return null
+
+        return UserSession(
+            userId = prefs.getString(KEY_SESSION_USER_ID, "usr_${email.hashCode()}") ?: "usr_${email.hashCode()}",
+            email = email,
+            fullName = prefs.getString(KEY_SESSION_FULL_NAME, email.substringBefore("@")) ?: email.substringBefore("@"),
+            accessToken = prefs.getString(KEY_SESSION_ACCESS_TOKEN, "") ?: "",
+            isLoggedIn = true,
+            isOfflineMode = prefs.getBoolean(KEY_SESSION_IS_OFFLINE_MODE, false)
+        )
+    }
+
+    fun clearUserSession() {
+        prefs.edit()
+            .remove(KEY_SESSION_USER_ID)
+            .remove(KEY_SESSION_EMAIL)
+            .remove(KEY_SESSION_FULL_NAME)
+            .remove(KEY_SESSION_ACCESS_TOKEN)
+            .remove(KEY_SESSION_IS_LOGGED_IN)
+            .remove(KEY_SESSION_IS_OFFLINE_MODE)
             .apply()
     }
 }

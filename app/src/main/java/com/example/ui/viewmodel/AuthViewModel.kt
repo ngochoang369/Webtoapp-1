@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.supabase.SupabaseClient
 import com.example.data.supabase.UserSession
+import com.example.security.VaultSecurityManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,13 +17,25 @@ sealed interface AuthUiState {
     data class Error(val message: String) : AuthUiState
 }
 
-class AuthViewModel(private val supabaseClient: SupabaseClient) : ViewModel() {
+class AuthViewModel(
+    private val supabaseClient: SupabaseClient,
+    private val vaultSecurityManager: VaultSecurityManager
+) : ViewModel() {
 
     private val _session = MutableStateFlow<UserSession?>(null)
     val session: StateFlow<UserSession?> = _session.asStateFlow()
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
+
+    init {
+        // Restore session from local storage on app start
+        val savedSession = vaultSecurityManager.getUserSession()
+        if (savedSession != null && savedSession.isLoggedIn) {
+            _session.value = savedSession
+            _uiState.value = AuthUiState.Success(savedSession)
+        }
+    }
 
     fun login(email: String, pass: String) {
         viewModelScope.launch {
@@ -32,6 +45,7 @@ class AuthViewModel(private val supabaseClient: SupabaseClient) : ViewModel() {
                 onSuccess = { s ->
                     _session.value = s
                     _uiState.value = AuthUiState.Success(s)
+                    vaultSecurityManager.saveUserSession(s)
                 },
                 onFailure = { e ->
                     _uiState.value = AuthUiState.Error(e.message ?: "Đăng nhập thất bại")
@@ -48,6 +62,7 @@ class AuthViewModel(private val supabaseClient: SupabaseClient) : ViewModel() {
                 onSuccess = { s ->
                     _session.value = s
                     _uiState.value = AuthUiState.Success(s)
+                    vaultSecurityManager.saveUserSession(s)
                 },
                 onFailure = { e ->
                     _uiState.value = AuthUiState.Error(e.message ?: "Đăng ký thất bại")
@@ -59,5 +74,6 @@ class AuthViewModel(private val supabaseClient: SupabaseClient) : ViewModel() {
     fun logout() {
         _session.value = null
         _uiState.value = AuthUiState.Idle
+        vaultSecurityManager.clearUserSession()
     }
 }

@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
         supabaseClient = SupabaseClient(vaultSecurityManager)
         diaryRepository = DiaryRepository(db.diaryDao(), db.auditLogDao())
 
-        authViewModel = AuthViewModel(supabaseClient)
+        authViewModel = AuthViewModel(supabaseClient, vaultSecurityManager)
         diaryViewModel = DiaryViewModel(diaryRepository) { authViewModel.session.value }
         adminViewModel = AdminViewModel(diaryRepository) { authViewModel.session.value }
         vaultViewModel = VaultViewModel(vaultSecurityManager)
@@ -154,15 +154,15 @@ fun MainAppHost(
                 tonalElevation = 8.dp,
                 modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
             ) {
-                // Tab 1: Nháº­t kĂ½
+                // Tab 1: Nhật ký
                 NavigationBarItem(
                     selected = activeTab == MainTab.DIARY_LIST,
                     onClick = {
                         editingDiary = null
                         activeTab = MainTab.DIARY_LIST
                     },
-                    icon = { Icon(Icons.Default.Book, contentDescription = "Nháº­t kĂ½") },
-                    label = { Text("Nháº­t KĂ½", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    icon = { Icon(Icons.Default.Book, contentDescription = "Nhật ký") },
+                    label = { Text("Nhật Ký", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = Color.White,
                         selectedTextColor = VaultPrimary,
@@ -173,15 +173,15 @@ fun MainAppHost(
                     modifier = Modifier.testTag("tab_diary_list")
                 )
 
-                // Tab 2: Viáº¿t má»›i
+                // Tab 2: Viết mới
                 NavigationBarItem(
                     selected = activeTab == MainTab.NEW_DIARY,
                     onClick = {
                         editingDiary = null
                         activeTab = MainTab.NEW_DIARY
                     },
-                    icon = { Icon(Icons.Default.Edit, contentDescription = "Viáº¿t má»›i") },
-                    label = { Text("Viáº¿t BĂ i", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    icon = { Icon(Icons.Default.Edit, contentDescription = "Viết mới") },
+                    label = { Text("Viết Bài", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = Color.White,
                         selectedTextColor = VaultPrimary,
@@ -210,12 +210,12 @@ fun MainAppHost(
                     )
                 }
 
-                // Tab 4: CĂ i Ä‘áº·t
+                // Tab 4: Cài đặt
                 NavigationBarItem(
                     selected = activeTab == MainTab.SETTINGS,
                     onClick = { activeTab = MainTab.SETTINGS },
-                    icon = { Icon(Icons.Default.Settings, contentDescription = "CĂ i Ä‘áº·t") },
-                    label = { Text("CĂ i Äáº·t", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
+                    icon = { Icon(Icons.Default.Settings, contentDescription = "Cài đặt") },
+                    label = { Text("Cài Đặt", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = Color.White,
                         selectedTextColor = VaultPrimary,
