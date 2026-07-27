@@ -1,6 +1,6 @@
 # Nhật Ký Bảo Mật Vault & E2EE - Android App
 
-Ứng dụng nhật ký bảo mật cá nhân mã hóa đầu-cuối (End-to-End Encryption) trên Android, hỗ trợ mã hóaAES-256-GCM, mở khóa bằng PIN/Sinh trắc học.
+Ứng dụng nhật ký bảo mật cá nhân mã hóa đầu-cuối (End-to-End Encryption) trên Android, hỗ trợ mã hóa AES-256-GCM, mở khóa bằng PIN/Sinh trắc học.
 
 ---
 
@@ -8,7 +8,7 @@
 
 Dự án đã được cấu hình sẵn **GitHub Actions** tại thư mục `.github/workflows/android.yml`.
 
-### Các bước đẩy code lên GitHub & Tải file APK:
+### Đẩy code lên GitHub & Tải APK:
 
 1. **Khởi tạo và đẩy code lên GitHub:**
    ```bash
@@ -21,16 +21,16 @@ Dự án đã được cấu hình sẵn **GitHub Actions** tại thư mục `.g
    ```
 
 2. **Tự động Build APK:**
-   - Khi bạn `push` code lên nhánh `main`, GitHub Actions sẽ tự động thực hiện build dự án.
-   - Bạn có thể theo dõi tiến trình tại tab **Actions** trên Repository GitHub của bạn.
+   - Khi `push` code lên nhánh `main`, GitHub Actions sẽ tự động thực hiện build dự án.
+   - Có thể theo dõi tiến trình tại tab **Actions** trên Repository GitHub.
 
-3. **Tải về File APK:**
+3. **Tải về APK:**
    - Vào tab **Actions** -> Chọn workflow vừa chạy thành công.
    - Cuộn xuống phần **Artifacts** để tải về file **`VaultDiary-Debug-APK`**.
 
 ---
 
-## 🛠 Hướng Dẫn Build Thủ Công Local
+## 🛠 Build Thủ Công Local
 
 Chạy lệnh sau tại thư mục gốc của dự án:
 
@@ -38,4 +38,4 @@ Chạy lệnh sau tại thư mục gốc của dự án:
 ./gradlew assembleDebug
 ```
 
-File APK đầu ra nằm tại: `app/build/outputs/apk/debug/app-debug.apk`
+File apk đầu ra nằm tại: `app/build/outputs/apk/debug/app-debug.apk`
