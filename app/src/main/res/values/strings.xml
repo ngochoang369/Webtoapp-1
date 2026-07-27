@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">PrivaDiary</string>
+
+    <!-- Login / Auth Screen -->
+    <string name="login_header_title">Nhật Ký PrivaDiary</string>
+    <string name="login_header_subtitle">Mã hóa E2EE • Auth Bảo Mật • Quản trị Admin</string>
+    <string name="login_title_sign_in">Đăng Nhập</string>
+    <string name="login_title_sign_up">Tạo Tài Khoản Mới</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Mật khẩu</string>
+    <string name="btn_sign_in">Đăng Nhập</string>
+    <string name="btn_sign_up">Đăng Ký Tài Khoản</string>
+    <string name="toggle_to_sign_in">Đã có tài khoản? Đăng nhập ngay</string>
+    <string name="toggle_to_sign_up">Chưa có tài khoản? Đăng ký ngay</string>
+
+    <!-- Admin & Security Notice -->
+    <string name="admin_notice_title">Thông báo phân quyền &amp; Bảo mật Admin</string>
+    <string name="admin_notice_body">Tài khoản Admin (devregish@gmail.com) có quyền kiểm toán bảo mật nhật ký người dùng. Về quyền xem nhật ký user, Admin sẽ tự tạo trang chính sách quyền riêng tư chi tiết sau.</string>
 </resources>

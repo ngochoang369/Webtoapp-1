@@ -56,6 +56,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -126,13 +127,13 @@ fun LoginScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Nháº­t KĂ½ PrivaDiary",
+                        text = stringResource(R.string.login_header_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                     Text(
-                        text = "MĂ£ hĂ³a E2EE â€¢ Auth Báº£o Máº­t â€¢ Quáº£n trá»‹ Admin",
+                        text = stringResource(R.string.login_header_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFFDDD6FE)
                     )
@@ -143,7 +144,7 @@ fun LoginScreen(
 
             // Form Title
             Text(
-                text = if (isSignUpMode) "Táº¡o TĂ i Khoáº£n Má»›i" else "ÄÄƒng Nháº­p",
+                text = if (isSignUpMode) stringResource(R.string.login_title_sign_up) else stringResource(R.string.login_title_sign_in),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -155,7 +156,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = emailInput,
                 onValueChange = { emailInput = it },
-                label = { Text("Email") },
+                label = { Text(stringResource(R.string.label_email)) },
                 leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
                 singleLine = true,
                 modifier = Modifier
@@ -177,7 +178,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = passInput,
                 onValueChange = { passInput = it },
-                label = { Text("Máº­t kháº©u") },
+                label = { Text(stringResource(R.string.label_password)) },
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -247,7 +248,7 @@ fun LoginScreen(
                     )
                 } else {
                     Text(
-                        text = if (isSignUpMode) "ÄÄƒng KĂ½ TĂ i Khoáº£n" else "ÄÄƒng Nháº­p",
+                        text = if (isSignUpMode) stringResource(R.string.btn_sign_up) else stringResource(R.string.btn_sign_in),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -262,7 +263,7 @@ fun LoginScreen(
                 modifier = Modifier.testTag("toggle_auth_mode_button")
             ) {
                 Text(
-                    text = if (isSignUpMode) "ÄĂ£ cĂ³ tĂ i khoáº£n? ÄÄƒng nháº­p ngay" else "ChÆ°a cĂ³ tĂ i khoáº£n? ÄÄƒng kĂ½ ngay",
+                    text = if (isSignUpMode) stringResource(R.string.toggle_to_sign_in) else stringResource(R.string.toggle_to_sign_up),
                     color = Color(0xFFA78BFA)
                 )
             }

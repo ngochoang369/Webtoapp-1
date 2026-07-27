@@ -59,6 +59,10 @@ android {
   testOptions { unitTests { isIncludeAndroidResources = true } }
 }
 
+tasks.withType<JavaCompile>().configureEach {
+  options.encoding = "UTF-8"
+}
+
 // Configure the Secrets Gradle Plugin to use .env and .env.example files
 // to match the convention used in Web projects.
 secrets {

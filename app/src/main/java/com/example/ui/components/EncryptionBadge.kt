@@ -31,6 +31,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import com.example.ui.theme.AdminBadgeBg
 import com.example.ui.theme.AdminBadgeText
 import com.example.ui.theme.E2eeBadgeBg
@@ -112,14 +114,14 @@ fun PrivacyPolicyAdminNoticeCard(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
-                    text = "Thông báo phân quyền & Bảo mật Admin",
+                    text = stringResource(R.string.admin_notice_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.padding(top = 4.dp))
                 Text(
-                    text = "Tài khoản Admin (devregish@gmail.com) có quyền kiểm toán bảo mật nhật ký người dùng. Về quyền xem nhật ký user, Admin sẽ tự tạo trang chính sách quyền riêng tư chi tiết sau.",
+                    text = stringResource(R.string.admin_notice_body),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFFDDD6FE),
                     fontSize = 13.sp,
