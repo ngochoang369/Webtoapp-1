@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PrivaDiary</string>
 
@@ -16,4 +17,10 @@
     <!-- Admin & Security Notice -->
     <string name="admin_notice_title">Thông báo phân quyền &amp; Bảo mật Admin</string>
     <string name="admin_notice_body">Tài khoản Admin (devregish@gmail.com) có quyền kiểm toán bảo mật nhật ký người dùng. Về quyền xem nhật ký user, Admin sẽ tự tạo trang chính sách quyền riêng tư chi tiết sau.</string>
+    <!-- Vault PIN Screen -->
+    <string name="vault_pin_set_title">Thiết lập PIN Vault mới</string>
+    <string name="vault_pin_enter_title">Nhập PIN Khóa Vault</string>
+    <string name="vault_pin_error_incorrect">Mã PIN không đúng, vui lòng thử lại!</string>
+    <string name="vault_pin_subtitle">Bảo vệ nhật ký cá nhân bằng mã khóa bí mật</string>
 </resources>
+

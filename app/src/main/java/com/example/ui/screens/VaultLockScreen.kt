@@ -42,6 +42,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import com.example.ui.theme.VaultDarkBg
 import com.example.ui.theme.VaultPrimary
 import com.example.ui.theme.VaultSurfaceDark
@@ -54,7 +56,8 @@ fun VaultLockScreen(
 ) {
     var enteredPin by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
-    var stepTitle by remember { mutableStateOf(if (isSettingNewPin) "Thiáº¿t láº­p PIN Vault má»›i" else "Nháº­p PIN KhĂ³a Vault") }
+    val titleText = if (isSettingNewPin) stringResource(R.string.vault_pin_set_title) else stringResource(R.string.vault_pin_enter_title)
+    val incorrectPinMsg = stringResource(R.string.vault_pin_error_incorrect)
 
     fun handleKeyPress(key: String) {
         if (enteredPin.length < 4) {
@@ -67,7 +70,7 @@ fun VaultLockScreen(
                 } else {
                     val success = onVerifyPin(newPin)
                     if (!success) {
-                        errorMessage = "MĂ£ PIN khĂ´ng Ä‘Ăºng, vui lĂ²ng thá»­ láº¡i!"
+                        errorMessage = incorrectPinMsg
                         enteredPin = ""
                     }
                 }
@@ -123,7 +126,7 @@ fun VaultLockScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = stepTitle,
+                text = titleText,
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color(0xFFDDD6FE)
             )
@@ -194,7 +197,7 @@ fun VaultLockScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.Backspace,
-                                        contentDescription = "XĂ³a PIN",
+                                        contentDescription = "Xóa PIN",
                                         tint = Color.LightGray
                                     )
                                 }
