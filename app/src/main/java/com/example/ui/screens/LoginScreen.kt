@@ -106,7 +106,7 @@ fun LoginScreen(
                     .border(1.dp, Color(0xFF6D28D9), RoundedCornerShape(24.dp))
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.img_privacy_hero_1784767955306),
+                    painter = painterResource(id = R.drawable.ic_privacy_hero),
                     contentDescription = "PrivaDiary Banner",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -126,13 +126,13 @@ fun LoginScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Nhật Ký PrivaDiary",
+                        text = "Nháº­t KĂ½ PrivaDiary",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                     Text(
-                        text = "Mã hóa E2EE • Auth Bảo Mật • Quản trị Admin",
+                        text = "MĂ£ hĂ³a E2EE â€¢ Auth Báº£o Máº­t â€¢ Quáº£n trá»‹ Admin",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFFDDD6FE)
                     )
@@ -143,7 +143,7 @@ fun LoginScreen(
 
             // Form Title
             Text(
-                text = if (isSignUpMode) "Tạo Tài Khoản Mới" else "Đăng Nhập",
+                text = if (isSignUpMode) "Táº¡o TĂ i Khoáº£n Má»›i" else "ÄÄƒng Nháº­p",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -177,7 +177,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = passInput,
                 onValueChange = { passInput = it },
-                label = { Text("Mật khẩu") },
+                label = { Text("Máº­t kháº©u") },
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -247,7 +247,7 @@ fun LoginScreen(
                     )
                 } else {
                     Text(
-                        text = if (isSignUpMode) "Đăng Ký Tài Khoản" else "Đăng Nhập",
+                        text = if (isSignUpMode) "ÄÄƒng KĂ½ TĂ i Khoáº£n" else "ÄÄƒng Nháº­p",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -262,7 +262,7 @@ fun LoginScreen(
                 modifier = Modifier.testTag("toggle_auth_mode_button")
             ) {
                 Text(
-                    text = if (isSignUpMode) "Đã có tài khoản? Đăng nhập ngay" else "Chưa có tài khoản? Đăng ký ngay",
+                    text = if (isSignUpMode) "ÄĂ£ cĂ³ tĂ i khoáº£n? ÄÄƒng nháº­p ngay" else "ChÆ°a cĂ³ tĂ i khoáº£n? ÄÄƒng kĂ½ ngay",
                     color = Color(0xFFA78BFA)
                 )
             }

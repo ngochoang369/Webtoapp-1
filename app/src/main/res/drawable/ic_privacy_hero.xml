@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="400dp"
+    android:height="200dp"
+    android:viewportWidth="400"
+    android:viewportHeight="200">
+    
+    <!-- Background Gradient Box -->
+    <path
+        android:fillColor="#1E1B4B"
+        android:pathData="M0,0 H400 V200 H0 Z" />
+
+    <path
+        android:fillColor="#312E81"
+        android:pathData="M-50,100 Q100,20 250,120 T500,80 V200 H-50 Z" />
+
+    <path
+        android:fillColor="#4C1D95"
+        android:pathData="M100,-20 Q250,150 450,30 V200 H100 Z" opacity="0.6" />
+
+    <!-- Center Security Shield -->
+    <path
+        android:fillColor="#8B5CF6"
+        android:pathData="M200,45 C170,45 155,55 155,55 V100 C155,135 182,160 200,168 C218,160 245,135 245,100 V55 C245,55 230,45 200,45 Z" />
+
+    <path
+        android:fillColor="#C4B5FD"
+        android:pathData="M200,55 C178,55 166,63 166,63 V100 C166,128 187,148 200,155 C213,148 234,128 234,100 V63 C234,63 222,55 200,55 Z" />
+
+    <!-- Lock Keyhole inside Shield -->
+    <path
+        android:fillColor="#2E1065"
+        android:pathData="M200,85 C193.4,85 188,90.4 188,97 C188,101.5 190.5,105.4 194,107.4 V120 C194,123.3 196.7,126 200,126 C203.3,126 206,123.3 206,120 V107.4 C209.5,105.4 212,101.5 212,97 C212,90.4 206.6,85 200,85 Z" />
+
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M200,90 C196.1,90 193,93.1 193,97 C193,99.8 194.6,102.2 197,103.3 V118 C197,119.7 198.3,121 200,121 C201.7,121 203,119.7 203,118 V103.3 C205.4,102.2 207,99.8 207,97 C207,93.1 203.9,90 200,90 Z" />
+</vector>
