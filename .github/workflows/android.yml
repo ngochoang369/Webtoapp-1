@@ -9,9 +9,12 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
-    name: Build Android APK
+    name: Build Android APK & Release
     runs-on: ubuntu-latest
 
     steps:
@@ -40,9 +43,50 @@ jobs:
       - name: Build Debug APK
         run: gradle assembleDebug --stacktrace
 
+      - name: Prepare APK File
+        run: |
+          mkdir -p release_apk
+          cp app/build/outputs/apk/debug/app-debug.apk release_apk/PrivaDiary-latest.apk
+
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: VaultDiary-Debug-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: PrivaDiary-APK
+          path: release_apk/PrivaDiary-latest.apk
           retention-days: 30
+
+      - name: Create GitHub Release for Tag
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release_apk/PrivaDiary-latest.apk
+          name: "PrivaDiary Release ${{ github.ref_name }}"
+          body: |
+            **PrivaDiary Release ${{ github.ref_name }}**
+
+            - **File:** `PrivaDiary-latest.apk`
+            - **Bảo mật:** Mã hóa E2EE, Mã PIN Vault & Duy trì đăng nhập
+            - Tự động đóng gói từ GitHub Actions workflow.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create or Update Rolling Latest Release
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "latest"
+          name: "PrivaDiary Latest Build"
+          body: |
+            **Bản dựng mới nhất (Latest Auto-Build)**
+
+            - Tự động cập nhật mỗi khi push code lên nhánh chính (`main`/`master`).
+            - Bao gồm mã hóa E2EE, Vault PIN, và đăng nhập duy trì session.
+            - Tải file `PrivaDiary-latest.apk` bên dưới để cài đặt.
+          files: release_apk/PrivaDiary-latest.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
