@@ -151,8 +151,7 @@ fun MainAppHost(
             NavigationBar(
                 containerColor = VaultSurfaceDark,
                 contentColor = Color.White,
-                tonalElevation = 8.dp,
-                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
+                tonalElevation = 8.dp
             ) {
                 // Tab 1: Nhật ký
                 NavigationBarItem(
