@@ -32,12 +32,17 @@ jobs:
         with:
           validate-wrappers: false
 
-      - name: Restore Debug Keystore
+      - name: Restore Fixed Keystore
         run: |
           if [ -f debug.keystore.base64 ]; then
             base64 -d debug.keystore.base64 > debug.keystore
+            mkdir -p ~/.android
+            cp debug.keystore ~/.android/debug.keystore
+            echo "Fixed debug keystore successfully restored from debug.keystore.base64!"
           else
             keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+            mkdir -p ~/.android
+            cp debug.keystore ~/.android/debug.keystore
           fi
 
       - name: Build Debug APK
@@ -65,7 +70,7 @@ jobs:
             **PrivaDiary Release ${{ github.ref_name }}**
 
             - **File:** `PrivaDiary-latest.apk`
-            - **Bảo mật:** Mã hóa E2EE, Mã PIN Vault & Duy trì đăng nhập
+            - **Bảo mật:** Mã hóa E2EE, Mã PIN Vault
             - Tự động đóng gói từ GitHub Actions workflow.
           draft: false
           prerelease: false
