@@ -3,6 +3,7 @@ package com.example.ui.screens
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,12 +23,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.AdminPanelSettings
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Pin
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SettingsSuggest
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -63,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.supabase.UserSession
 import com.example.ui.components.PrivacyPolicyAdminNoticeCard
+import com.example.ui.theme.VaultCardBorder
 import com.example.ui.theme.VaultDarkBg
 import com.example.ui.theme.VaultPrimary
 import com.example.ui.theme.VaultSurfaceDark
@@ -77,6 +83,7 @@ fun SettingsScreen(
     onSetNewPinRequested: () -> Unit
 ) {
     val isPinSet by vaultViewModel.isPinSet.collectAsState()
+    val themeMode by vaultViewModel.themeMode.collectAsState()
 
     var showExportDialog by remember { mutableStateOf(false) }
 
@@ -147,6 +154,102 @@ fun SettingsScreen(
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold
                             )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Theme Mode Customization Card
+            Text(
+                text = "GIAO DIỆN & MÀU SẮC",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Gray,
+                modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
+            )
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("theme_selection_card"),
+                colors = CardDefaults.cardColors(containerColor = VaultSurfaceDark),
+                shape = RoundedCornerShape(16.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, VaultCardBorder)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    ) {
+                        Icon(Icons.Default.Palette, contentDescription = null, tint = VaultPrimary)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "Chủ Đề Giao Diện",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp
+                            )
+                            Text(
+                                text = when (themeMode) {
+                                    "LIGHT" -> "Chế độ Sáng (Light Theme)"
+                                    "SYSTEM" -> "Theo Chế Độ Hệ Thống"
+                                    else -> "Chế độ Tối (Dark & Soft Blue)"
+                                },
+                                color = Color.Gray,
+                                fontSize = 11.sp
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        val options = listOf(
+                            Triple("DARK", "Tối", Icons.Default.DarkMode),
+                            Triple("LIGHT", "Sáng", Icons.Default.LightMode),
+                            Triple("SYSTEM", "Hệ Thống", Icons.Default.SettingsSuggest)
+                        )
+
+                        options.forEach { (mode, label, icon) ->
+                            val isSelected = themeMode == mode
+                            val bg = if (isSelected) VaultPrimary else VaultDarkBg
+                            val textColor = if (isSelected) Color(0xFF0F172A) else Color.White
+                            val borderColor = if (isSelected) VaultPrimary else VaultCardBorder
+
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(bg)
+                                    .border(1.dp, borderColor, RoundedCornerShape(12.dp))
+                                    .clickable { vaultViewModel.setThemeMode(mode) }
+                                    .padding(vertical = 10.dp, horizontal = 4.dp)
+                                    .testTag("theme_option_$mode"),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Icon(
+                                        imageVector = icon,
+                                        contentDescription = label,
+                                        tint = textColor,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = label,
+                                        color = textColor,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
                     }
                 }

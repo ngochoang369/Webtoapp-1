@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
     primary = VaultPrimary,
-    onPrimary = Color.White,
+    onPrimary = Color(0xFF0F172A),
     primaryContainer = VaultSurfaceVariant,
     onPrimaryContainer = VaultTextPrimary,
     secondary = VaultSecondary,
@@ -25,20 +25,20 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = VaultPrimary,
+    primary = Color(0xFF0284C7),
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFEDE9FE),
-    onPrimaryContainer = Color(0xFF4C1D95),
-    secondary = VaultSecondary,
+    primaryContainer = Color(0xFFE0F2FE),
+    onPrimaryContainer = Color(0xFF0369A1),
+    secondary = Color(0xFF0EA5E9),
     onSecondary = Color.White,
-    tertiary = VaultTertiary,
-    background = Color(0xFFF8F7FC),
-    onBackground = Color(0xFF1F1A2C),
+    tertiary = Color(0xFF10B981),
+    background = Color(0xFFF0F9FF),
+    onBackground = Color(0xFF0F172A),
     surface = Color.White,
-    onSurface = Color(0xFF1F1A2C),
-    surfaceVariant = Color(0xFFF1EEF9),
-    onSurfaceVariant = Color(0xFF6B6187),
-    outline = Color(0xFFDDD6FE)
+    onSurface = Color(0xFF0F172A),
+    surfaceVariant = Color(0xFFE0F2FE),
+    onSurfaceVariant = Color(0xFF334155),
+    outline = Color(0xFFBAE6FD)
 )
 
 @Composable

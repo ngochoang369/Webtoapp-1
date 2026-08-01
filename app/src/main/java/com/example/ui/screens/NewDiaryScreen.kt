@@ -100,6 +100,7 @@ fun NewDiaryScreen(
                         Icon(Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = Color.White)
                     }
                 },
+                windowInsets = WindowInsets(0, 0, 0, 0),
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = VaultSurfaceDark)
             )
         }

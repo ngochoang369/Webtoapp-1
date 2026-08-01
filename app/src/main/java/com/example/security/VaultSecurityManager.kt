@@ -24,6 +24,8 @@ class VaultSecurityManager(context: Context) {
         private const val KEY_SESSION_ACCESS_TOKEN = "key_session_access_token"
         private const val KEY_SESSION_IS_LOGGED_IN = "key_session_is_logged_in"
         private const val KEY_SESSION_IS_OFFLINE_MODE = "key_session_is_offline_mode"
+
+        private const val KEY_THEME_MODE = "key_theme_mode"
     }
 
     var isVaultLocked: Boolean = isPinEnabled()
@@ -134,5 +136,13 @@ class VaultSecurityManager(context: Context) {
             .remove(KEY_SESSION_IS_LOGGED_IN)
             .remove(KEY_SESSION_IS_OFFLINE_MODE)
             .apply()
+    }
+
+    fun getThemeMode(): String {
+        return prefs.getString(KEY_THEME_MODE, "DARK") ?: "DARK"
+    }
+
+    fun setThemeMode(mode: String) {
+        prefs.edit().putString(KEY_THEME_MODE, mode).apply()
     }
 }

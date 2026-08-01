@@ -17,6 +17,14 @@ class VaultViewModel(private val vaultSecurityManager: VaultSecurityManager) : V
     private val _allowAdminAuditDefault = MutableStateFlow(vaultSecurityManager.isAllowAdminAuditDefault())
     val allowAdminAuditDefault: StateFlow<Boolean> = _allowAdminAuditDefault.asStateFlow()
 
+    private val _themeMode = MutableStateFlow(vaultSecurityManager.getThemeMode())
+    val themeMode: StateFlow<String> = _themeMode.asStateFlow()
+
+    fun setThemeMode(mode: String) {
+        vaultSecurityManager.setThemeMode(mode)
+        _themeMode.value = mode
+    }
+
     fun verifyPin(pin: String): Boolean {
         val success = vaultSecurityManager.verifyPin(pin)
         if (success) {

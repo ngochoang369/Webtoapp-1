@@ -8,6 +8,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -85,7 +87,15 @@ class MainActivity : ComponentActivity() {
         vaultViewModel = VaultViewModel(vaultSecurityManager)
 
         setContent {
-            PrivaDiaryTheme(darkTheme = true) {
+            val themeMode by vaultViewModel.themeMode.collectAsState()
+            val systemInDark = isSystemInDarkTheme()
+            val isDarkTheme = when (themeMode) {
+                "LIGHT" -> false
+                "DARK" -> true
+                else -> systemInDark
+            }
+
+            PrivaDiaryTheme(darkTheme = isDarkTheme) {
                 MainAppHost(
                     authViewModel = authViewModel,
                     diaryViewModel = diaryViewModel,
@@ -146,11 +156,11 @@ fun MainAppHost(
         modifier = Modifier
             .fillMaxSize()
             .testTag("main_app_host"),
-        containerColor = VaultDarkBg,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             NavigationBar(
-                containerColor = VaultSurfaceDark,
-                contentColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 tonalElevation = 8.dp
             ) {
                 // Tab 1: Nhật ký
@@ -163,11 +173,11 @@ fun MainAppHost(
                     icon = { Icon(Icons.Default.Book, contentDescription = "Nhật ký") },
                     label = { Text("Nhật Ký", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.White,
-                        selectedTextColor = VaultPrimary,
-                        indicatorColor = VaultPrimary,
-                        unselectedIconColor = Color.Gray,
-                        unselectedTextColor = Color.Gray
+                        selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        indicatorColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                     ),
                     modifier = Modifier.testTag("tab_diary_list")
                 )
@@ -182,11 +192,11 @@ fun MainAppHost(
                     icon = { Icon(Icons.Default.Edit, contentDescription = "Viết mới") },
                     label = { Text("Viết Bài", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.White,
-                        selectedTextColor = VaultPrimary,
-                        indicatorColor = VaultPrimary,
-                        unselectedIconColor = Color.Gray,
-                        unselectedTextColor = Color.Gray
+                        selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        indicatorColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                     ),
                     modifier = Modifier.testTag("tab_new_diary")
                 )
@@ -199,11 +209,11 @@ fun MainAppHost(
                         icon = { Icon(Icons.Default.AdminPanelSettings, contentDescription = "Admin") },
                         label = { Text("Admin Audit", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Color.White,
-                            selectedTextColor = Color(0xFFA78BFA),
-                            indicatorColor = Color(0xFF6D28D9),
-                            unselectedIconColor = Color.Gray,
-                            unselectedTextColor = Color.Gray
+                            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                            indicatorColor = MaterialTheme.colorScheme.primary,
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                         ),
                         modifier = Modifier.testTag("tab_admin_audit")
                     )
@@ -216,11 +226,11 @@ fun MainAppHost(
                     icon = { Icon(Icons.Default.Settings, contentDescription = "Cài đặt") },
                     label = { Text("Cài Đặt", fontSize = 11.sp, fontWeight = FontWeight.Bold) },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.White,
-                        selectedTextColor = VaultPrimary,
-                        indicatorColor = VaultPrimary,
-                        unselectedIconColor = Color.Gray,
-                        unselectedTextColor = Color.Gray
+                        selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        indicatorColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                     ),
                     modifier = Modifier.testTag("tab_settings")
                 )
