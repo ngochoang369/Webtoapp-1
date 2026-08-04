@@ -1,5 +1,7 @@
 package com.example.ui.screens
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -58,9 +60,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.DiaryModel
-import com.example.ui.theme.VaultDarkBg
-import com.example.ui.theme.VaultPrimary
-import com.example.ui.theme.VaultSurfaceDark
 import com.example.ui.viewmodel.DiaryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,24 +83,24 @@ fun NewDiaryScreen(
         modifier = Modifier
             .fillMaxSize()
             .testTag("new_diary_screen"),
-        containerColor = VaultDarkBg,
+        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             TopAppBar(
                 title = {
                     Text(
                         text = if (editingDiary != null) "Chỉnh Sửa Nhật Ký" else "Viết Nhật Ký Mới",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = Color.White)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = MaterialTheme.colorScheme.onSurface)
                     }
                 },
                 windowInsets = WindowInsets(0, 0, 0, 0),
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = VaultSurfaceDark)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         }
     ) { paddingValues ->
@@ -117,16 +116,16 @@ fun NewDiaryScreen(
                 value = titleInput,
                 onValueChange = { titleInput = it },
                 label = { Text("Tiêu đề bài viết") },
-                placeholder = { Text("VD: Một ngày tĩnh lặng trong lòng thành phố...", color = Color.Gray) },
+                placeholder = { Text("VD: Một ngày tĩnh lặng trong lòng thành phố...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("diary_title_input"),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = VaultPrimary,
-                    unfocusedBorderColor = Color(0xFF382C54),
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 )
             )
 
@@ -136,7 +135,7 @@ fun NewDiaryScreen(
             Text(
                 text = "Cảm xúc hôm nay",
                 style = MaterialTheme.typography.titleSmall,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -146,17 +145,29 @@ fun NewDiaryScreen(
             ) {
                 items(moodList) { mood ->
                     val isSelected = mood == selectedMood
+                    val chipBg by animateColorAsState(
+                        targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                        animationSpec = tween(250),
+                        label = "MoodBgAnim"
+                    )
+                    val chipTextColor by animateColorAsState(
+                        targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        animationSpec = tween(250),
+                        label = "MoodTextAnim"
+                    )
+
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
-                            .background(if (isSelected) VaultPrimary else VaultSurfaceDark)
+                            .background(chipBg)
                             .clickable { selectedMood = mood }
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Text(
                             text = mood,
-                            color = if (isSelected) Color.White else Color(0xFFDDD6FE),
-                            fontSize = 12.sp
+                            color = chipTextColor,
+                            fontSize = 12.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                         )
                     }
                 }
@@ -168,7 +179,7 @@ fun NewDiaryScreen(
             Text(
                 text = "Thời tiết",
                 style = MaterialTheme.typography.titleSmall,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -178,17 +189,29 @@ fun NewDiaryScreen(
             ) {
                 items(weatherList) { weather ->
                     val isSelected = weather == selectedWeather
+                    val chipBg by animateColorAsState(
+                        targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                        animationSpec = tween(250),
+                        label = "WeatherBgAnim"
+                    )
+                    val chipTextColor by animateColorAsState(
+                        targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        animationSpec = tween(250),
+                        label = "WeatherTextAnim"
+                    )
+
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
-                            .background(if (isSelected) Color(0xFF10B981) else VaultSurfaceDark)
+                            .background(chipBg)
                             .clickable { selectedWeather = weather }
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Text(
                             text = weather,
-                            color = if (isSelected) Color.White else Color(0xFFDDD6FE),
-                            fontSize = 12.sp
+                            color = chipTextColor,
+                            fontSize = 12.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                         )
                     }
                 }
@@ -201,16 +224,16 @@ fun NewDiaryScreen(
                 value = tagInput,
                 onValueChange = { tagInput = it },
                 label = { Text("Thẻ / Phân loại (phân cách bằng dấu phẩy)") },
-                leadingIcon = { Icon(Icons.Default.Tag, contentDescription = null, tint = Color.Gray) },
+                leadingIcon = { Icon(Icons.Default.Tag, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("diary_tags_input"),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = VaultPrimary,
-                    unfocusedBorderColor = Color(0xFF382C54),
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 )
             )
 
@@ -221,17 +244,17 @@ fun NewDiaryScreen(
                 value = contentInput,
                 onValueChange = { contentInput = it },
                 label = { Text("Nội dung nhật ký (Mã hóa riêng tư)") },
-                placeholder = { Text("Viết tâm tư, suy nghĩ của bạn ở đây...", color = Color.Gray) },
+                placeholder = { Text("Viết tâm tư, suy nghĩ của bạn ở đây...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 minLines = 6,
                 maxLines = 12,
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("diary_content_input"),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = VaultPrimary,
-                    unfocusedBorderColor = Color(0xFF382C54),
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 )
             )
 
@@ -240,16 +263,16 @@ fun NewDiaryScreen(
             // Security Options Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = VaultSurfaceDark),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 shape = RoundedCornerShape(16.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF382C54))
+                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Quyền Riêng Tư & Phân Quyền Access Control",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -262,17 +285,22 @@ fun NewDiaryScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Lock, contentDescription = null, tint = VaultPrimary, modifier = Modifier.padding(end = 4.dp))
+                                Icon(
+                                    Icons.Default.Lock,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(end = 4.dp)
+                                )
                                 Text(
                                     text = "Mã hóa đầu cuối E2EE AES-256",
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
                             Text(
                                 text = "Mã hóa trực tiếp tại thiết bị trước khi lưu DB",
-                                color = Color.Gray,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 11.sp
                             )
                         }
@@ -280,8 +308,8 @@ fun NewDiaryScreen(
                             checked = isE2eeEncrypted,
                             onCheckedChange = { isE2eeEncrypted = it },
                             colors = SwitchDefaults.colors(
-                                checkedThumbColor = Color.White,
-                                checkedTrackColor = VaultPrimary
+                                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                                checkedTrackColor = MaterialTheme.colorScheme.primary
                             ),
                             modifier = Modifier.testTag("e2ee_switch")
                         )
@@ -313,7 +341,7 @@ fun NewDiaryScreen(
                     .fillMaxWidth()
                     .height(52.dp)
                     .testTag("save_diary_submit_btn"),
-                colors = ButtonDefaults.buttonColors(containerColor = VaultPrimary),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(12.dp),
                 enabled = contentInput.isNotBlank()
             ) {

@@ -52,8 +52,6 @@ import androidx.compose.ui.unit.sp
 import com.example.data.model.DiaryModel
 import com.example.ui.components.AdminAuditBadge
 import com.example.ui.components.E2eeBadge
-import com.example.ui.theme.VaultPrimary
-import com.example.ui.theme.VaultSurfaceDark
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -74,7 +72,7 @@ fun DiaryDetailDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         modifier = Modifier.testTag("diary_detail_dialog"),
-        containerColor = VaultSurfaceDark,
+        containerColor = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(20.dp),
         title = {
             Row(
@@ -87,17 +85,17 @@ fun DiaryDetailDialog(
                         text = diary.title,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = formattedDate,
                         fontSize = 12.sp,
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 IconButton(onClick = onDismiss) {
-                    Icon(Icons.Default.Close, contentDescription = "Đóng", tint = Color.LightGray)
+                    Icon(Icons.Default.Close, contentDescription = "Đóng", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         },
@@ -126,20 +124,20 @@ fun DiaryDetailDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFF261D3B))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                         .padding(12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = "Cảm xúc: ${diary.mood}",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Medium,
                         fontSize = 13.sp
                     )
                     Text(
                         text = "Thời tiết: ${diary.weather}",
-                        color = Color(0xFFDDD6FE),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp
                     )
                 }
@@ -156,10 +154,10 @@ fun DiaryDetailDialog(
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(8.dp))
-                                    .background(Color(0xFF382C54))
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
                                     .padding(horizontal = 8.dp, vertical = 4.dp)
                             ) {
-                                Text(text = "#$tag", color = Color(0xFFA78BFA), fontSize = 11.sp)
+                                Text(text = "#$tag", color = MaterialTheme.colorScheme.primary, fontSize = 11.sp)
                             }
                         }
                     }
@@ -168,21 +166,21 @@ fun DiaryDetailDialog(
                 // Decrypted Content Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF130E20)),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
                     shape = RoundedCornerShape(12.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF382C54))
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
                             text = if (showRawCiphertext) "CHUỖI MÃ HÓA CIPHERTEXT (BASE64):" else "NỘI DUNG NHẬT KÝ ĐÃ GIẢI MÃ:",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (showRawCiphertext) Color(0xFFF59E0B) else VaultPrimary
+                            color = if (showRawCiphertext) Color(0xFFF59E0B) else MaterialTheme.colorScheme.primary
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = if (showRawCiphertext) diary.rawContentEncrypted else diary.content,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onSurface,
                             style = MaterialTheme.typography.bodyMedium,
                             fontSize = 14.sp,
                             fontFamily = if (showRawCiphertext) FontFamily.Monospace else FontFamily.Default,
@@ -230,7 +228,7 @@ fun DiaryDetailDialog(
                 }
                 Row {
                     TextButton(onClick = onDismiss) {
-                        Text("Đóng", color = Color.Gray)
+                        Text("Đóng", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
@@ -238,7 +236,7 @@ fun DiaryDetailDialog(
                             onEdit()
                             onDismiss()
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = VaultPrimary),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         modifier = Modifier.testTag("edit_diary_btn")
                     ) {
                         Icon(Icons.Default.Edit, contentDescription = "Sửa", modifier = Modifier.size(16.dp))

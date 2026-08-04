@@ -60,9 +60,6 @@ import com.example.data.supabase.UserSession
 import com.example.ui.components.AdminAuditBadge
 import com.example.ui.components.E2eeBadge
 import com.example.ui.components.PrivacyPolicyAdminNoticeCard
-import com.example.ui.theme.VaultDarkBg
-import com.example.ui.theme.VaultPrimary
-import com.example.ui.theme.VaultSurfaceDark
 import com.example.ui.viewmodel.AdminViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -80,7 +77,7 @@ fun AdminAuditScreen(adminViewModel: AdminViewModel) {
         modifier = Modifier
             .fillMaxSize()
             .testTag("admin_audit_screen"),
-        containerColor = VaultDarkBg,
+        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
         Column(
@@ -92,7 +89,7 @@ fun AdminAuditScreen(adminViewModel: AdminViewModel) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(VaultSurfaceDark)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(16.dp)
             ) {
                 Row(
@@ -105,13 +102,13 @@ fun AdminAuditScreen(adminViewModel: AdminViewModel) {
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFF4C1D95)),
+                                .background(MaterialTheme.colorScheme.primary),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.AdminPanelSettings,
                                 contentDescription = "Admin",
-                                tint = Color.White
+                                tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                         Spacer(modifier = Modifier.width(12.dp))
@@ -120,12 +117,12 @@ fun AdminAuditScreen(adminViewModel: AdminViewModel) {
                                 text = "Bảng Thẩm Định Security Admin",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = "Admin: ${UserSession.ADMIN_EMAIL}",
                                 fontSize = 12.sp,
-                                color = Color(0xFFA78BFA)
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
@@ -142,12 +139,12 @@ fun AdminAuditScreen(adminViewModel: AdminViewModel) {
                 TabRow(
                     selectedTabIndex = selectedTabIndex,
                     containerColor = Color.Transparent,
-                    contentColor = VaultPrimary,
+                    contentColor = MaterialTheme.colorScheme.primary,
                     indicator = { tabPositions ->
                         if (selectedTabIndex < tabPositions.size) {
                             TabRowDefaults.SecondaryIndicator(
                                 modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                                color = VaultPrimary
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
@@ -158,7 +155,7 @@ fun AdminAuditScreen(adminViewModel: AdminViewModel) {
                         text = {
                             Text(
                                 text = "Thẩm Định Nhật Ký (${allDiaries.size})",
-                                color = if (selectedTabIndex == 0) VaultPrimary else Color.Gray,
+                                color = if (selectedTabIndex == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -169,7 +166,7 @@ fun AdminAuditScreen(adminViewModel: AdminViewModel) {
                         text = {
                             Text(
                                 text = "Log Kiểm Toán (${auditLogs.size})",
-                                color = if (selectedTabIndex == 1) VaultPrimary else Color.Gray,
+                                color = if (selectedTabIndex == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -237,9 +234,9 @@ fun AdminAuditScreen(adminViewModel: AdminViewModel) {
 
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = VaultSurfaceDark),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                             shape = RoundedCornerShape(12.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF382C54))
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
                                 Row(
@@ -249,24 +246,24 @@ fun AdminAuditScreen(adminViewModel: AdminViewModel) {
                                     Text(
                                         text = log.actionType,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFFA78BFA),
+                                        color = MaterialTheme.colorScheme.primary,
                                         fontSize = 13.sp
                                     )
                                     Text(
                                         text = formattedTime,
-                                        color = Color.Gray,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontSize = 11.sp
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = "Admin: ${log.adminEmail} -> User: ${log.targetUserEmail}",
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 12.sp
                                 )
                                 Text(
                                     text = "Lý do: ${log.reason}",
-                                    color = Color.LightGray,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 11.sp
                                 )
                             }
@@ -296,9 +293,9 @@ fun AdminDiaryAuditCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = VaultSurfaceDark),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF382C54))
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -310,14 +307,14 @@ fun AdminDiaryAuditCard(
                     Text(
                         text = "User: ${diary.userEmail}",
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFFA78BFA),
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 13.sp
                     )
                     Text(
                         text = diary.title,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 AdminAuditBadge(isAllowed = diary.allowAdminAudit)
@@ -327,7 +324,7 @@ fun AdminDiaryAuditCard(
 
             Text(
                 text = diary.content,
-                color = Color(0xFFDDD6FE),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 2,
                 fontSize = 13.sp
             )
@@ -343,7 +340,7 @@ fun AdminDiaryAuditCard(
 
                 Button(
                     onClick = onInspect,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6D28D9)),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     shape = RoundedCornerShape(8.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
                 ) {

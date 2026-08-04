@@ -1,5 +1,7 @@
 package com.example.ui.screens
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -62,9 +64,6 @@ import com.example.data.model.DiaryModel
 import com.example.data.supabase.UserSession
 import com.example.ui.components.AdminAuditBadge
 import com.example.ui.components.E2eeBadge
-import com.example.ui.theme.VaultDarkBg
-import com.example.ui.theme.VaultPrimary
-import com.example.ui.theme.VaultSurfaceDark
 import com.example.ui.viewmodel.DiaryViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -98,13 +97,13 @@ fun DiaryListScreen(
         modifier = Modifier
             .fillMaxSize()
             .testTag("diary_list_screen"),
-        containerColor = VaultDarkBg,
+        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddNewClick,
-                containerColor = VaultPrimary,
-                contentColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
                 shape = CircleShape,
                 modifier = Modifier
                     .padding(bottom = 80.dp)
@@ -123,7 +122,7 @@ fun DiaryListScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(VaultSurfaceDark)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(16.dp)
             ) {
                 Row(
@@ -136,12 +135,12 @@ fun DiaryListScreen(
                             text = "Nhật Ký Cá Nhân",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = session?.email ?: "user@privadiary.app",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFFA78BFA)
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                     E2eeBadge()
@@ -153,12 +152,12 @@ fun DiaryListScreen(
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { diaryViewModel.setSearchQuery(it) },
-                    placeholder = { Text("Tìm kiếm bài viết, thẻ, từ khóa...", color = Color.Gray) },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
+                    placeholder = { Text("Tìm kiếm bài viết, thẻ, từ khóa...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                     trailingIcon = {
                         if (searchQuery.isNotEmpty()) {
                             IconButton(onClick = { diaryViewModel.setSearchQuery("") }) {
-                                Icon(Icons.Default.Clear, contentDescription = "Xóa tìm kiếm", tint = Color.Gray)
+                                Icon(Icons.Default.Clear, contentDescription = "Xóa tìm kiếm", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
                     },
@@ -168,12 +167,12 @@ fun DiaryListScreen(
                         .testTag("search_diary_input"),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = VaultPrimary,
-                        unfocusedBorderColor = Color(0xFF382C54),
-                        focusedContainerColor = Color(0xFF130E20),
-                        unfocusedContainerColor = Color(0xFF130E20),
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     )
                 )
 
@@ -186,16 +185,27 @@ fun DiaryListScreen(
                 ) {
                     items(moodOptions) { (label, moodVal) ->
                         val isSelected = (selectedMood == moodVal && moodVal != null) || (selectedMood == null && moodVal == null)
+                        val animatedBg by animateColorAsState(
+                            targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                            animationSpec = tween(250),
+                            label = "ChipBgAnimation"
+                        )
+                        val animatedTextColor by animateColorAsState(
+                            targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            animationSpec = tween(250),
+                            label = "ChipTextAnimation"
+                        )
+
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(if (isSelected) VaultPrimary else Color(0xFF261D3B))
+                                .background(animatedBg)
                                 .clickable { diaryViewModel.setMoodFilter(moodVal) }
                                 .padding(horizontal = 12.dp, vertical = 6.dp)
                         ) {
                             Text(
                                 text = label,
-                                color = if (isSelected) Color.White else Color(0xFFDDD6FE),
+                                color = animatedTextColor,
                                 fontSize = 12.sp,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                             )
@@ -217,13 +227,13 @@ fun DiaryListScreen(
                         modifier = Modifier
                             .size(72.dp)
                             .clip(CircleShape)
-                            .background(VaultSurfaceDark),
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.MenuBook,
                             contentDescription = "Chưa có nhật ký",
-                            tint = VaultPrimary,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(36.dp)
                         )
                     }
@@ -232,13 +242,13 @@ fun DiaryListScreen(
                         text = "Chưa Có Bài Viết Nào",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Nhấn nút (+) bên dưới để tạo bài viết nhật ký riêng tư mã hóa đầu cuối đầu tiên.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
                 }
@@ -286,9 +296,9 @@ fun DiaryCardItem(
             .fillMaxWidth()
             .clickable { onClick() }
             .testTag("diary_card_${diary.id}"),
-        colors = CardDefaults.cardColors(containerColor = VaultSurfaceDark),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF382C54))
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -300,7 +310,7 @@ fun DiaryCardItem(
                     text = diary.title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
@@ -318,7 +328,7 @@ fun DiaryCardItem(
             Text(
                 text = diary.content,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFFDDD6FE),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 13.sp,
@@ -334,17 +344,17 @@ fun DiaryCardItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = diary.mood, fontSize = 12.sp, color = Color.White)
+                    Text(text = diary.mood, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "•", fontSize = 12.sp, color = Color.Gray)
+                    Text(text = "•", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = diary.weather, fontSize = 12.sp, color = Color.LightGray)
+                    Text(text = diary.weather, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
 
                 Text(
                     text = formattedDate,
                     fontSize = 11.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

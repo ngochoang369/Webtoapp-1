@@ -4,9 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -242,46 +247,61 @@ fun MainAppHost(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            when (activeTab) {
-                MainTab.DIARY_LIST -> {
-                    DiaryListScreen(
-                        diaryViewModel = diaryViewModel,
-                        session = session,
-                        onAddNewClick = {
-                            editingDiary = null
-                            activeTab = MainTab.NEW_DIARY
-                        },
-                        onEditClick = { diary ->
-                            editingDiary = diary
-                            activeTab = MainTab.NEW_DIARY
-                        }
-                    )
-                }
+            AnimatedContent(
+                targetState = activeTab,
+                transitionSpec = {
+                    val isForward = targetState.ordinal > initialState.ordinal
+                    if (isForward) {
+                        (slideInHorizontally(animationSpec = tween(280)) { width -> width / 3 } + fadeIn(animationSpec = tween(280)))
+                            .togetherWith(slideOutHorizontally(animationSpec = tween(280)) { width -> -width / 3 } + fadeOut(animationSpec = tween(280)))
+                    } else {
+                        (slideInHorizontally(animationSpec = tween(280)) { width -> -width / 3 } + fadeIn(animationSpec = tween(280)))
+                            .togetherWith(slideOutHorizontally(animationSpec = tween(280)) { width -> width / 3 } + fadeOut(animationSpec = tween(280)))
+                    }
+                },
+                label = "MainTabTransition"
+            ) { targetTab ->
+                when (targetTab) {
+                    MainTab.DIARY_LIST -> {
+                        DiaryListScreen(
+                            diaryViewModel = diaryViewModel,
+                            session = session,
+                            onAddNewClick = {
+                                editingDiary = null
+                                activeTab = MainTab.NEW_DIARY
+                            },
+                            onEditClick = { diary ->
+                                editingDiary = diary
+                                activeTab = MainTab.NEW_DIARY
+                            }
+                        )
+                    }
 
-                MainTab.NEW_DIARY -> {
-                    NewDiaryScreen(
-                        diaryViewModel = diaryViewModel,
-                        editingDiary = editingDiary,
-                        onBackClick = {
-                            editingDiary = null
-                            activeTab = MainTab.DIARY_LIST
-                        }
-                    )
-                }
+                    MainTab.NEW_DIARY -> {
+                        NewDiaryScreen(
+                            diaryViewModel = diaryViewModel,
+                            editingDiary = editingDiary,
+                            onBackClick = {
+                                editingDiary = null
+                                activeTab = MainTab.DIARY_LIST
+                            }
+                        )
+                    }
 
-                MainTab.ADMIN_AUDIT -> {
-                    AdminAuditScreen(adminViewModel = adminViewModel)
-                }
+                    MainTab.ADMIN_AUDIT -> {
+                        AdminAuditScreen(adminViewModel = adminViewModel)
+                    }
 
-                MainTab.SETTINGS -> {
-                    SettingsScreen(
-                        authViewModel = authViewModel,
-                        vaultViewModel = vaultViewModel,
-                        session = session,
-                        onSetNewPinRequested = {
-                            isSettingNewPinFlow = true
-                        }
-                    )
+                    MainTab.SETTINGS -> {
+                        SettingsScreen(
+                            authViewModel = authViewModel,
+                            vaultViewModel = vaultViewModel,
+                            session = session,
+                            onSetNewPinRequested = {
+                                isSettingNewPinFlow = true
+                            }
+                        )
+                    }
                 }
             }
         }
